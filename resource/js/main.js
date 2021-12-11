@@ -125,23 +125,48 @@ var app = new Vue({
                     let loadFileData = e.data; //uso worker.js per ricevere già JSON dal file EXCEL, problema consite nel riceve due volte, visto che ci sono pagine diverse(si potrebbe valuitare di utlizare un foglio per un contratto).
                     console.log(loadFileData);
 
-                    this.CpList = [];
+                    this.CpList = {
+                        TARGA: [],
+                        TOTALE: {
+                            KM_VEI: 0,
+                            L_CIS: 0,
+                            L_VEI: 0
+                        }
+                    };
 
                     this.selectedFile_name = selectedFile.name;
 
                     loadFileData.forEach(row => {
-                        if (this.CpList[row.TARGA] == undefined) {
-                            this.CpList[row.TARGA] = {
+                        if (this.CpList.TARGA[row.TARGA] == undefined) {
+                            this.CpList.TARGA[row.TARGA] = {
                                 KM: [],
                                 L: [],
-                                DATA: []
+                                DATA: [],
+
+                                L_TOT: 0,
+
+                                KM_TOT: 0,
+                                KM_B: row.CHILOMETRAGGIO
                             };
                         }
 
                         if (row.QUANTITÀ != 0) {
-                            this.CpList[row.TARGA].KM.push(row.CHILOMETRAGGIO);
-                            this.CpList[row.TARGA].L.push(row.QUANTITÀ);
-                            this.CpList[row.TARGA].DATA.push(row.DATA);
+                            this.CpList.TARGA[row.TARGA].KM.push(row.CHILOMETRAGGIO);
+                            this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
+                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA);
+
+                            this.CpList.TARGA[row.TARGA].L_TOT += row.QUANTITÀ;
+
+                            this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
+
+                            if ((row.TARGA).substring(0,3) == "CIS") {
+                                this.CpList.TOTALE.L_CIS += row.QUANTITÀ;
+                            } else {
+                                this.CpList.TOTALE.L_VEI += row.QUANTITÀ;
+                                this.CpList.TOTALE.KM_VEI += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
+                            }
+
+                            this.CpList.TARGA[row.TARGA].KM_B = row.CHILOMETRAGGIO;
                         }
 
                         /*if (row.CEID_ASSEGNATO_IMPRESA == "NO") {
