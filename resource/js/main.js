@@ -123,7 +123,7 @@ var app = new Vue({
                 worker.onmessage = (e) => {
 
                     let loadFileData = e.data; //uso worker.js per ricevere già JSON dal file EXCEL, problema consite nel riceve due volte, visto che ci sono pagine diverse(si potrebbe valuitare di utlizare un foglio per un contratto).
-                    console.log(loadFileData);
+                    //console.log(loadFileData);
 
                     this.CpList = {
                         TARGA: [],
@@ -137,6 +137,12 @@ var app = new Vue({
                     this.selectedFile_name = selectedFile.name;
 
                     loadFileData.forEach(row => {
+
+                        var km_s = row.CHILOMETRAGGIO;
+                        if (row.CHILOMETRAGGIO > 10) {
+                            km_s = 0;
+                        }
+
                         if (this.CpList.TARGA[row.TARGA] == undefined) {
                             this.CpList.TARGA[row.TARGA] = {
                                 KM: [],
@@ -146,7 +152,7 @@ var app = new Vue({
                                 L_TOT: 0,
 
                                 KM_TOT: 0,
-                                KM_B: row.CHILOMETRAGGIO
+                                KM_B: km_s
                             };
                         }
 
@@ -157,16 +163,19 @@ var app = new Vue({
 
                             this.CpList.TARGA[row.TARGA].L_TOT += row.QUANTITÀ;
 
-                            this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
-
-                            if ((row.TARGA).substring(0,3) == "CIS") {
+                            if ((row.TARGA).substring(0, 3) == "CIS") {
                                 this.CpList.TOTALE.L_CIS += row.QUANTITÀ;
                             } else {
                                 this.CpList.TOTALE.L_VEI += row.QUANTITÀ;
+
                                 this.CpList.TOTALE.KM_VEI += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
                             }
 
-                            this.CpList.TARGA[row.TARGA].KM_B = row.CHILOMETRAGGIO;
+                            this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
+
+                            if (row.CHILOMETRAGGIO > 10) {
+                                this.CpList.TARGA[row.TARGA].KM_B = row.CHILOMETRAGGIO; //problema: se i km sono 0 o 1 rovinano calcolo
+                            }
                         }
 
                         /*if (row.CEID_ASSEGNATO_IMPRESA == "NO") {
