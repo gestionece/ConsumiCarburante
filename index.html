@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARGO</title>
+
+    <link href="https://gestionece.github.io/resources/img/favicon.png" rel="shortcut icon" type="image/png">
+
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!--Import materialize.css-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+
+    <style>
+        *:focus {
+            outline: none;
+        }
+
+        .noselect {
+            -webkit-touch-callout: none;
+            /* iOS Safari */
+            -webkit-user-select: none;
+            /* Safari */
+            -khtml-user-select: none;
+            /* Konqueror HTML */
+            -moz-user-select: none;
+            /* Firefox */
+            -ms-user-select: none;
+            /* Internet Explorer/Edge */
+            user-select: none;
+            /* Non-prefixed version, currently supported by Chrome and Opera */
+        }
+
+        html {
+            background: url(https://picsum.photos/1920/1080?random) no-repeat center fixed;
+            background-size: cover;
+
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .blur {
+            background-color: rgb(0 0 0 / 80%);
+            border-radius: 3px;
+            padding: 10px;
+            margin-top: 50px;
+            color: #ffffff;
+
+            opacity: 0.8;
+        }
+
+        .blur:hover {
+            opacity: 1;
+        }
+
+        .pointer {
+            cursor: pointer;
+        }
+
+        .pointer:hover {
+            color: #039be5;
+            /*#4CAF50;*/
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        @media only screen and (max-width: 600px) {
+            #app {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- App -->
+    <div id="app" style="display: none;" v-show="loadVue">
+        <div class="container">
+            <section v-if="page_loadFile" class="blur">
+                <div class="row">
+                    <h2>Ehi non ti dimentichi nulla? <b>NO NIENTE!</b></h2>
+                    <p class="flow-text"><i>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sequi dolore,
+                            eius
+                            molestias
+                            enim nesciunt necessitatibus! Dolorum aut, ex ratione aspernatur nisi, iste voluptates
+                            suscipit
+                            tempore
+                            repudiandae mollitia consequuntur excepturi eos.</i>
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="file-field input-field">
+                        <div class="waves-effect waves-light btn green"
+                            v-bind:class="{'pulse': (btnLoad_isDisabled != true)}" :disabled='btnLoad_isDisabled'>
+                            <span><i class="material-icons left">file_upload</i>Load</span>
+                            <input @change="loadFile($event.target.files[0])" type="file"
+                                accept=".xls, .xlsx, .xlsm, .csv">
+                        </div>
+                    </div>
+                </div>
+                <div v-if="page_CpList_loader" class="row">
+                    <div class="progress">
+                        <div class="indeterminate green"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="container" style="padding-bottom: 50px;">
+            <div v-if="page_CpList" class="blur z-depth-2">
+                <div class="row">
+                    <div class="col s12">
+                        <div class="col-content">
+                            <p class="flow-text"><i>{{selectedFile_name}}</i></p>
+                            <table class="z-depth-1 grey darken-3" style="border-radius: 3px;">
+                                <!--highlight-->
+                                <thead class="noselect">
+                                    <tr>
+                                        <th class="pointer" v-on:click="SorteTable(1)">&emsp;Targa
+                                            <i v-if="Math.abs(sort) == 1"
+                                                class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
+                                                : 'expand_more')}}
+                                            </i>
+                                            <i v-else class="tiny material-icons">unfold_more</i>
+                                        </th>
+                                        <th class="noselect pointer center" v-on:click="SorteTable(2)">Km
+                                            <i v-if="Math.abs(sort) == 2"
+                                                class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
+                                                : 'expand_more')}}
+                                            </i>
+                                            <i v-else class="tiny material-icons">unfold_more</i>
+                                        </th>
+                                        <th class="noselect pointer center" v-on:click="SorteTable(3)">Litri
+                                            <i v-if="Math.abs(sort) == 3"
+                                                class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
+                                                : 'expand_more')}}
+                                            </i>
+                                            <i v-else class="tiny material-icons">unfold_more</i>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="cp in CpTable">
+                                        <td>&emsp;{{cp[0]}}<a
+                                                v-bind:href="'https://geco.impresalevratti.it/admin/backend/pallet/?q=' + cp[0]"
+                                                class="noselect" target="_blank"><i
+                                                    class="tiny material-icons">open_in_new</i></a></td>
+                                        <td class="noselect center">{{cp[1]}}</td>
+                                        <td v-on:click="(cp[2] != 0) ? openDataGeco(cp[0], CpList[cp[0]].CE, true) : ''"
+                                            class="noselect center" v-bind:class="{'pointer': (cp[2] > 0)}">{{cp[2]}}
+                                        </td>
+                                        <td v-on:click="(cp[3] != 0) ? openDataGeco(cp[0], CpList[cp[0]].CE_Error, true) : ''"
+                                            class="noselect center" v-bind:class="{'pointer': (cp[3] > 0)}">{{cp[3]}}
+                                        </td>
+                                        <td v-on:click="(cp[4] == true) ? openConfrGeco(cp[0], CpList[cp[0]].Result, true) : ''"
+                                            class="noselect center" v-bind:class="{'pointer': (cp[4] == true)}"><i
+                                                class="material-icons">{{((cp[4] == true) ? 'check'
+                                                : 'close')}}</i>{{CpList[cp[0]].Result.length > 0 ?
+                                            CpList[cp[0]].Result.length: ''}}</td>
+                                        <td class="noselect center">
+                                            <label>
+                                                <input type="checkbox" v-model="cp[5]" />
+                                                <span></span>
+                                            </label>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <div class="col-content">
+                            <div class="file-field input-field">
+                                <div class="waves-effect waves-light btn green" v-on:click="backLCList">
+                                    <i class="material-icons left">navigate_before</i>Back
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>-->
+    <!--JavaScript at end of body for optimized loading-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+    <script src="resource/js/main.js"></script>
+</body>
+
+</html>
