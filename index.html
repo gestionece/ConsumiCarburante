@@ -53,12 +53,12 @@
             margin-top: 50px;
             color: #ffffff;
 
-            opacity: 0.8;
+            opacity: 1;/*0.8;*/
         }
 
-        .blur:hover {
+        /*.blur:hover {
             opacity: 1;
-        }
+        }*/
 
         .pointer {
             cursor: pointer;
@@ -124,22 +124,36 @@
                                 <!--highlight-->
                                 <thead class="noselect">
                                     <tr>
-                                        <th class="pointer" v-on:click="SorteTable(1)">&emsp;Targa
+                                        <th class="pointer noselect" v-on:click="SorteTable(1)">&emsp;Targa
                                             <i v-if="Math.abs(sort) == 1"
                                                 class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
                                                 : 'expand_more')}}
                                             </i>
                                             <i v-else class="tiny material-icons">unfold_more</i>
                                         </th>
-                                        <th class="noselect pointer center" v-on:click="SorteTable(2)">Km
+                                        <th class="pointer noselect" v-on:click="SorteTable(2)">&emsp;Data Inizio
                                             <i v-if="Math.abs(sort) == 2"
                                                 class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
                                                 : 'expand_more')}}
                                             </i>
                                             <i v-else class="tiny material-icons">unfold_more</i>
                                         </th>
-                                        <th class="noselect pointer center" v-on:click="SorteTable(3)">Litri
+                                        <th class="pointer noselect" v-on:click="SorteTable(3)">&emsp;Data Fine
                                             <i v-if="Math.abs(sort) == 3"
+                                                class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
+                                                : 'expand_more')}}
+                                            </i>
+                                            <i v-else class="tiny material-icons">unfold_more</i>
+                                        </th>
+                                        <th class="noselect pointer center" v-on:click="SorteTableN(4)">Km
+                                            <i v-if="Math.abs(sort) == 4"
+                                                class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
+                                                : 'expand_more')}}
+                                            </i>
+                                            <i v-else class="tiny material-icons">unfold_more</i>
+                                        </th>
+                                        <th class="noselect pointer center" v-on:click="SorteTableN(5)">Litri
+                                            <i v-if="Math.abs(sort) == 5"
                                                 class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
                                                 : 'expand_more')}}
                                             </i>
@@ -148,29 +162,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="cp in CpTable">
-                                        <td>&emsp;{{cp[0]}}<a
-                                                v-bind:href="'https://geco.impresalevratti.it/admin/backend/pallet/?q=' + cp[0]"
-                                                class="noselect" target="_blank"><i
-                                                    class="tiny material-icons">open_in_new</i></a></td>
-                                        <td class="noselect center">{{cp[1]}}</td>
-                                        <td v-on:click="(cp[2] != 0) ? openDataGeco(cp[0], CpList[cp[0]].CE, true) : ''"
-                                            class="noselect center" v-bind:class="{'pointer': (cp[2] > 0)}">{{cp[2]}}
-                                        </td>
-                                        <td v-on:click="(cp[3] != 0) ? openDataGeco(cp[0], CpList[cp[0]].CE_Error, true) : ''"
-                                            class="noselect center" v-bind:class="{'pointer': (cp[3] > 0)}">{{cp[3]}}
-                                        </td>
-                                        <td v-on:click="(cp[4] == true) ? openConfrGeco(cp[0], CpList[cp[0]].Result, true) : ''"
-                                            class="noselect center" v-bind:class="{'pointer': (cp[4] == true)}"><i
-                                                class="material-icons">{{((cp[4] == true) ? 'check'
-                                                : 'close')}}</i>{{CpList[cp[0]].Result.length > 0 ?
-                                            CpList[cp[0]].Result.length: ''}}</td>
-                                        <td class="noselect center">
-                                            <label>
-                                                <input type="checkbox" v-model="cp[5]" />
-                                                <span></span>
-                                            </label>
-                                        </td>
+                                    <tr v-for="tg in CpTable">
+                                        <td>&emsp;{{tg[0]}}</td>
+                                        <td class="noselect">&emsp;{{tg[1]}}</td>
+                                        <td class="noselect">&emsp;{{tg[2]}}</td>
+                                        <td class="noselect center">{{tg[3]}}</td>
+                                        <td class="noselect center">{{tg[4]}}</td>
                                     </tr>
                                 </tbody>
                             </table>
