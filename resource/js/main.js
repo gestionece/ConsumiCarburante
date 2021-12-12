@@ -18,45 +18,7 @@ var app = new Vue({
 
         sort: 1,
     },
-    computed: {
-        geTable() {
-            let table = [];
-            Object.keys(this.CpList).forEach(element => {
-                let temp = [element, this.CpList[element].status, this.CpList[element].CE.length, this.CpList[element].CE_Error.length];
-                table.push(temp);
-            });
-            return table;
-        },
-    },
     methods: {
-        DownloadAll() {
-            Object.keys(app.CpList).forEach(CP => {
-                let url = "https://geco.impresalevratti.it/admin/backend/pallet/?q=" + CP + "#download";
-                window.open(url, '_blank');
-            });
-        },
-        DownloadCELIst(CP, CE) {
-            var data = CP;
-            CE.forEach(function (code) {
-                data += '\n' + code;
-            });
-
-            this.download(data, CP, ".txt");
-        },
-        OpenBarCode(CE) {
-            if (this.edit_Barcode != null && this.edit_Barcode == CE) {
-                this.edit_Barcode = null;
-            } else {
-                this.edit_Barcode = CE;
-            }
-        },
-        CheckErrorCE(CE) {
-            if (this.modal_link == false) {
-                return false;
-            } else {
-                return this.CpList[this.modal_CP].CE_Error.find(element => element == CE)
-            }
-        },
         SorteTable(sorted) { //al posto di ataddare il SORT si potrebbe prima convertire CpList in un array, cosi da filtrare in pase al index della colona
 
             if (Math.abs(sorted) == this.sort) {
@@ -81,37 +43,21 @@ var app = new Vue({
 
             this.sort = sorted;
         },
-        // diff between just two arrays:
-        arrayDiff(a, b) {
-            var arrays = Array.prototype.slice.call(arguments);
-            var diff = [];
+        SorteTableN(sorted) { //al posto di ataddare il SORT si potrebbe prima convertire CpList in un array, cosi da filtrare in pase al index della colona
 
-            arrays.forEach(function (arr, i) {
-                var other = i === 1 ? a : b;
-                arr.forEach(function (x) {
-                    if (other.indexOf(x) === -1) {
-                        diff.push(x);
-                    }
-                });
-            })
-
-            return diff;
-        },
-        openDataGeco(cp, ce, link) {
-            this.modal_CP = cp;
-            this.modal_CE = ce;
-            this.modal_link = link;
-            this.modal_show_data = true;
-        },
-        openConfrGeco(cp, result) {
-            if (this.CpList[cp].Result == false) {
-                this.openDataGeco("Sono identici", [], false);
-            } else {
-                this.modal_link = true;
-                this.modal_CP = cp;
-                this.modal_CE = result;
-                this.modal_show_data = true;
+            if (Math.abs(sorted) == this.sort) {
+                this.CpTable = this.CpTable.reverse();
+                this.sort *= -1;
+                return;
             }
+
+            this.CpTable = this.CpTable.sort(function (a, b) {
+                var A = a[Math.abs(sorted) - 1];
+                var B = b[Math.abs(sorted) - 1];
+                return A - B
+            });
+
+            this.sort = sorted;
         },
         loadFile(selectedFile) {
             if (selectedFile && window.Worker) {
@@ -137,29 +83,24 @@ var app = new Vue({
                     this.selectedFile_name = selectedFile.name;
 
                     loadFileData.forEach(row => {
-
-                        var km_s = row.CHILOMETRAGGIO;
-                        if (row.CHILOMETRAGGIO > 10) {
-                            km_s = 0;
-                        }
-
                         if (this.CpList.TARGA[row.TARGA] == undefined) {
                             this.CpList.TARGA[row.TARGA] = {
                                 KM: [],
                                 L: [],
                                 DATA: [],
+                                MAX: 0,
+                                MIN: row.CHILOMETRAGGIO,
 
                                 L_TOT: 0,
 
                                 KM_TOT: 0,
-                                KM_B: km_s
                             };
                         }
 
-                        if (row.QUANTITÀ != 0) {
+                        if (row.QUANTITÀ != 0) {//&& row.CHILOMETRAGGIO > 10
                             this.CpList.TARGA[row.TARGA].KM.push(row.CHILOMETRAGGIO);
                             this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
-                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA);
+                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
 
                             this.CpList.TARGA[row.TARGA].L_TOT += row.QUANTITÀ;
 
@@ -167,31 +108,29 @@ var app = new Vue({
                                 this.CpList.TOTALE.L_CIS += row.QUANTITÀ;
                             } else {
                                 this.CpList.TOTALE.L_VEI += row.QUANTITÀ;
-
-                                this.CpList.TOTALE.KM_VEI += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
                             }
 
-                            this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].KM_B;
-
-                            if (row.CHILOMETRAGGIO > 10) {
-                                this.CpList.TARGA[row.TARGA].KM_B = row.CHILOMETRAGGIO; //problema: se i km sono 0 o 1 rovinano calcolo
+                            if (this.CpList.TARGA[row.TARGA].MAX < row.CHILOMETRAGGIO) {
+                                this.CpList.TARGA[row.TARGA].MAX = row.CHILOMETRAGGIO;
                             }
+                            if (this.CpList.TARGA[row.TARGA].MIN > row.CHILOMETRAGGIO && row.CHILOMETRAGGIO > 10) {
+                                this.CpList.TARGA[row.TARGA].MIN = row.CHILOMETRAGGIO;
+                            }
+
+                            this.CpList.TARGA[row.TARGA].KM_TOT = this.CpList.TARGA[row.TARGA].MAX - this.CpList.TARGA[row.TARGA].MIN;
+                            this.CpList.TOTALE.KM_VEI += this.CpList.TARGA[row.TARGA].KM_TOT;
+
                         }
-
-                        /*if (row.CEID_ASSEGNATO_IMPRESA == "NO") {
-                            this.CpList[row.CASARSID].status = "KO";
-                            this.CpList[row.CASARSID].CE_Error.push(row.CEID);
-                        }*/
-
-                        //this.CpList[row.TARGA].CE.push(row.CEID);
                     });
 
                     console.log(this.CpList);
 
-                    /*this.CpTable = [];
-                    Object.keys(this.CpList).forEach(element => {
-                        this.CpTable.push([element, this.CpList[element].status, this.CpList[element].CE.length, this.CpList[element].CE_Error.length, false, false]);
-                    });*/
+                    this.CpTable = [];
+                    Object.keys(this.CpList.TARGA).forEach(element => {
+                        this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2)]);
+                    });
+
+                    console.log(this.CpTable);
 
                     this.page_loadFile = false;
                     this.page_CpList = true;
