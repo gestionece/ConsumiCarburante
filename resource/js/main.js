@@ -3,6 +3,7 @@ var app = new Vue({
     data: {
         CpList: [],
         CpTable: [],
+        CpTot: [],
         selectedFile_name: "",
         page_loadFile: true,
         page_CpList: false,
@@ -87,12 +88,15 @@ var app = new Vue({
                             this.CpList.TARGA[row.TARGA] = {
                                 KM: [],
                                 L: [],
-                                //DATA: [],
-                                BU_KM: row.CHILOMETRAGGIO,
+                                DATA: [],
+                                MAX: 0,
+                                MIN: row.CHILOMETRAGGIO,
 
                                 L_TOT: 0,
 
                                 KM_TOT: 0,
+
+                                BU_KM: row.CHILOMETRAGGIO,
                             };
                         }
 
@@ -100,7 +104,7 @@ var app = new Vue({
 
                             this.CpList.TARGA[row.TARGA].KM.push(row.CHILOMETRAGGIO);
                             this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
-                            //this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
+                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
 
                             this.CpList.TARGA[row.TARGA].L_TOT += row.QUANTITÀ;
 
@@ -130,17 +134,16 @@ var app = new Vue({
 
                     console.log(this.CpList);
 
-                    this.CpTable = [
+                    this.CpTot = [
                         ["Cisterna", 0, (this.CpList.TOTALE.L_CIS).toFixed(2)],
                         ["Veicolo", (this.CpList.TOTALE.KM_VEI).toFixed(1), (this.CpList.TOTALE.L_VEI).toFixed(2)],
                     ];
+                    console.log(this.CpTot);
 
-                    /*Object.keys(this.CpList.TARGA).forEach(element => {
+                    this.CpTable = [];
+                    Object.keys(this.CpList.TARGA).forEach(element => {
                         this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2)]);
-                    });*/
-
-
-
+                    });
                     console.log(this.CpTable);
 
                     this.page_loadFile = false;
