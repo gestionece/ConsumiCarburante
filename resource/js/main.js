@@ -145,7 +145,7 @@ var app = new Vue({
 
                     this.CpTable = [];
                     Object.keys(this.CpList.TARGA).forEach(element => {
-                        this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2), this.CpList.TARGA[element].KM_ERROR]);
+                        this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2), this.CpList.TARGA[element].KM_ERROR, this.CpList.TARGA[element].IMPORTO_TOT.toFixed(2)]);
                     });
                     console.log(this.CpTable);
 
