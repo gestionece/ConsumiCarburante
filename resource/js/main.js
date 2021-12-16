@@ -115,14 +115,8 @@ var app = new Vue({
                                 this.CpList.TOTALE.L_VEI += row.QUANTITÀ;
                             }
 
-                            /*console.log(row.TARGA);
-                            console.log(row.CHILOMETRAGGIO);
-                            console.log(this.CpList.TARGA[row.TARGA].BU_KM);
-                            console.log(row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM);*/
-
                             if ( row.CHILOMETRAGGIO > 10 && this.CpList.TARGA[row.TARGA].BU_KM > 10 && row.CHILOMETRAGGIO > this.CpList.TARGA[row.TARGA].BU_KM && (row.TARGA).substring(0, 3) != "CIS") { //row.CHILOMETRAGGIO > 10 && this.CpList.TARGA[row.TARGA].BU_KM > 10
 
-                                console.log("Ok");
                                 this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM;
                                 this.CpList.TOTALE.KM_VEI += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM;
 
@@ -140,13 +134,13 @@ var app = new Vue({
 
                     this.CpTot = [
                         ["Cisterna", 0, (this.CpList.TOTALE.L_CIS).toFixed(2)],
-                        ["Veicolo", (this.CpList.TOTALE.KM_VEI).toFixed(1), (this.CpList.TOTALE.L_VEI).toFixed(2)],
+                        ["Veicolo", (this.CpList.TOTALE.KM_VEI).toFixed(0), (this.CpList.TOTALE.L_VEI).toFixed(2)],
                     ];
                     console.log(this.CpTot);
 
                     this.CpTable = [];
                     Object.keys(this.CpList.TARGA).forEach(element => {
-                        this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2)]);
+                        this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2), this.CpList.TARGA[element].KM_ERROR]);
                     });
                     console.log(this.CpTable);
 
