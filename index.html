@@ -141,6 +141,7 @@
                                 <!--highlight-->
                                 <thead class="noselect">
                                     <tr>
+                                        <th class="pointer noselect"></th>
                                         <th class="pointer noselect" v-on:click="SorteTable(1)">&emsp;Targa
                                             <i v-if="Math.abs(sort) == 1"
                                                 class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
@@ -194,6 +195,11 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="tg in CpTable">
+                                        <td class="noselect center">
+                                            <i class="tiny material-icons">{{((tg[0].substring(0, 3) == 'CIS') ? 'local_gas_station'
+                                                : 'local_shipping')}}
+                                            </i>
+                                        </td>
                                         <td>&emsp;{{tg[0]}}</td>
                                         <td class="noselect">&emsp;{{tg[1]}}</td>
                                         <td class="noselect">&emsp;{{tg[2]}}</td>
