@@ -87,9 +87,8 @@ var app = new Vue({
                             this.CpList.TARGA[row.TARGA] = {
                                 KM: [],
                                 L: [],
-                                DATA: [],
-                                MAX: 0,
-                                MIN: row.CHILOMETRAGGIO,
+                                //DATA: [],
+                                BU_KM: row.CHILOMETRAGGIO,
 
                                 L_TOT: 0,
 
@@ -98,9 +97,10 @@ var app = new Vue({
                         }
 
                         if (row.QUANTITÀ != 0) {//&& row.CHILOMETRAGGIO > 10
+
                             this.CpList.TARGA[row.TARGA].KM.push(row.CHILOMETRAGGIO);
                             this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
-                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
+                            //this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
 
                             this.CpList.TARGA[row.TARGA].L_TOT += row.QUANTITÀ;
 
@@ -110,25 +110,36 @@ var app = new Vue({
                                 this.CpList.TOTALE.L_VEI += row.QUANTITÀ;
                             }
 
-                            if (this.CpList.TARGA[row.TARGA].MAX < row.CHILOMETRAGGIO) {
-                                this.CpList.TARGA[row.TARGA].MAX = row.CHILOMETRAGGIO;
-                            }
-                            if (this.CpList.TARGA[row.TARGA].MIN > row.CHILOMETRAGGIO && row.CHILOMETRAGGIO > 10) {
-                                this.CpList.TARGA[row.TARGA].MIN = row.CHILOMETRAGGIO;
+                            /*console.log(row.TARGA);
+                            console.log(row.CHILOMETRAGGIO);
+                            console.log(this.CpList.TARGA[row.TARGA].BU_KM);
+                            console.log(row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM);*/
+
+                            if (row.CHILOMETRAGGIO > 10 && this.CpList.TARGA[row.TARGA].BU_KM > 10 && (row.TARGA).substring(0, 3) != "CIS") { 
+
+                                console.log("Ok");
+                                this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM;
+                                this.CpList.TOTALE.KM_VEI += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM;
+
+                                this.CpList.TARGA[row.TARGA].BU_KM = row.CHILOMETRAGGIO;
                             }
 
-                            this.CpList.TARGA[row.TARGA].KM_TOT = this.CpList.TARGA[row.TARGA].MAX - this.CpList.TARGA[row.TARGA].MIN;
-                            this.CpList.TOTALE.KM_VEI += this.CpList.TARGA[row.TARGA].KM_TOT;
 
                         }
                     });
 
                     console.log(this.CpList);
 
-                    this.CpTable = [];
-                    Object.keys(this.CpList.TARGA).forEach(element => {
+                    this.CpTable = [
+                        ["Cisterna", 0, (this.CpList.TOTALE.L_CIS).toFixed(2)],
+                        ["Veicolo", (this.CpList.TOTALE.KM_VEI).toFixed(1), (this.CpList.TOTALE.L_VEI).toFixed(2)],
+                    ];
+
+                    /*Object.keys(this.CpList.TARGA).forEach(element => {
                         this.CpTable.push([element, this.CpList.TARGA[element].DATA[0], this.CpList.TARGA[element].DATA[this.CpList.TARGA[element].DATA.length - 1], this.CpList.TARGA[element].KM_TOT.toFixed(0), this.CpList.TARGA[element].L_TOT.toFixed(2)]);
-                    });
+                    });*/
+
+
 
                     console.log(this.CpTable);
 
