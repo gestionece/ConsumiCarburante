@@ -120,6 +120,27 @@
                     <div class="col s12">
                         <div class="col-content">
                             <p class="flow-text"><i>{{selectedFile_name}}</i></p>
+
+                            <table class="z-depth-1 grey darken-3" style="border-radius: 3px;">
+                                <!--highlight-->
+                                <thead class="noselect">
+                                    <tr>
+                                        <th class="noselect center">Tipo</th>
+                                        <th class="noselect center">Chilometri</th>
+                                        <th class="noselect center">Litri</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="tot in CpTot">
+                                        <td class="noselect center">{{tot[0]}}</td>
+                                        <td class="noselect center">{{tot[1]}}</td>
+                                        <td class="noselect center">{{tot[2]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <p class="flow-text"><i>Detaglio per Targa</i></p>
+
                             <table class="z-depth-1 grey darken-3" style="border-radius: 3px;">
                                 <!--highlight-->
                                 <thead class="noselect">
@@ -152,6 +173,13 @@
                                             </i>
                                             <i v-else class="tiny material-icons">unfold_more</i>
                                         </th>
+                                        <th class="noselect pointer center" v-on:click="SorteTableN(6)">Km Error
+                                            <i v-if="Math.abs(sort) == 4"
+                                                class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
+                                                : 'expand_more')}}
+                                            </i>
+                                            <i v-else class="tiny material-icons">unfold_more</i>
+                                        </th>
                                         <th class="noselect pointer center" v-on:click="SorteTableN(5)">Litri
                                             <i v-if="Math.abs(sort) == 5"
                                                 class="tiny material-icons">{{((Math.sign(sort) == 1) ? 'expand_less'
@@ -167,6 +195,9 @@
                                         <td class="noselect">&emsp;{{tg[1]}}</td>
                                         <td class="noselect">&emsp;{{tg[2]}}</td>
                                         <td class="noselect center">{{tg[3]}}</td>
+                                        <td class="noselect center">
+                                            <i v-if="tg[5] == true" class="tiny material-icons">star half</i>
+                                        </td>
                                         <td class="noselect center">{{tg[4]}}</td>
                                     </tr>
                                 </tbody>
