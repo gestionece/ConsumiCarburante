@@ -97,10 +97,11 @@ var app = new Vue({
                                 KM_TOT: 0,
 
                                 BU_KM: row.CHILOMETRAGGIO,
+                                KM_ERROR: false,
                             };
                         }
 
-                        if (row.QUANTITÀ != 0) {//&& row.CHILOMETRAGGIO > 10
+                        if (row["PREZZO UNITARIO"] > 1 && row["PREZZO UNITARIO"] < 10 && row.QUANTITÀ != 0) {//&& row.CHILOMETRAGGIO > 10 //row.QUANTITÀ != 0 PREZZO UNITARIO
 
                             this.CpList.TARGA[row.TARGA].KM.push(row.CHILOMETRAGGIO);
                             this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
@@ -119,15 +120,18 @@ var app = new Vue({
                             console.log(this.CpList.TARGA[row.TARGA].BU_KM);
                             console.log(row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM);*/
 
-                            if (row.CHILOMETRAGGIO > 10 && this.CpList.TARGA[row.TARGA].BU_KM > 10 && (row.TARGA).substring(0, 3) != "CIS") { 
+                            if ( row.CHILOMETRAGGIO > 10 && this.CpList.TARGA[row.TARGA].BU_KM > 10 && row.CHILOMETRAGGIO > this.CpList.TARGA[row.TARGA].BU_KM && (row.TARGA).substring(0, 3) != "CIS") { //row.CHILOMETRAGGIO > 10 && this.CpList.TARGA[row.TARGA].BU_KM > 10
 
                                 console.log("Ok");
                                 this.CpList.TARGA[row.TARGA].KM_TOT += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM;
                                 this.CpList.TOTALE.KM_VEI += row.CHILOMETRAGGIO - this.CpList.TARGA[row.TARGA].BU_KM;
 
                                 this.CpList.TARGA[row.TARGA].BU_KM = row.CHILOMETRAGGIO;
-                            }
+                            } 
 
+                            if (row.CHILOMETRAGGIO < 10 || row.CHILOMETRAGGIO < this.CpList.TARGA[row.TARGA].BU_KM) {
+                                this.CpList.TARGA[row.TARGA].KM_ERROR = true;
+                            }
 
                         }
                     });
