@@ -88,14 +88,13 @@ var app = new Vue({
                             this.CpList.TARGA[row.TARGA] = {
                                 KM: [],
                                 L: [],
+                                IMPORTO: [],
                                 DATA: [],
-                                MAX: 0,
-                                MIN: row.CHILOMETRAGGIO,
-
+                                LOCALITÀ: [],
+                                AUTISTA: [],
                                 L_TOT: 0,
-
                                 KM_TOT: 0,
-
+                                IMPORTO_TOT: 0,
                                 BU_KM: row.CHILOMETRAGGIO,
                                 KM_ERROR: false,
                             };
@@ -104,10 +103,16 @@ var app = new Vue({
                         if (row["PREZZO UNITARIO"] > 1 && row["PREZZO UNITARIO"] < 10 && row.QUANTITÀ != 0) {//&& row.CHILOMETRAGGIO > 10 //row.QUANTITÀ != 0 PREZZO UNITARIO
 
                             this.CpList.TARGA[row.TARGA].KM.push(row.CHILOMETRAGGIO);
-                            this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
-                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
 
+                            this.CpList.TARGA[row.TARGA].DATA.push(row.DATA.substring(0, 10));
+                            this.CpList.TARGA[row.TARGA].LOCALITÀ.push(row.LOCALITÀ);
+                            this.CpList.TARGA[row.TARGA].AUTISTA.push(row["CODICE AUTISTA"]);
+
+                            this.CpList.TARGA[row.TARGA].L.push(row.QUANTITÀ);
                             this.CpList.TARGA[row.TARGA].L_TOT += row.QUANTITÀ;
+
+                            this.CpList.TARGA[row.TARGA].IMPORTO.push(row.IMPORTO);
+                            this.CpList.TARGA[row.TARGA].IMPORTO_TOT += row.IMPORTO;
 
                             if ((row.TARGA).substring(0, 3) == "CIS") {
                                 this.CpList.TOTALE.L_CIS += row.QUANTITÀ;
