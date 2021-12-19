@@ -98,7 +98,7 @@
                         <div class="waves-effect waves-light btn light-blue accent-3"
                             v-bind:class="{'pulse': (btnLoad_isDisabled != true)}" :disabled='btnLoad_isDisabled'>
                             <span><i class="material-icons left">file_upload</i>Load</span>
-                            <input @change="loadFile($event.target.files[0])" type="file"
+                            <input multiple @change="loadFile($event.target.files)" type="file"
                                 accept=".xls, .xlsx, .xlsm, .csv">
                         </div>
                     </div>
