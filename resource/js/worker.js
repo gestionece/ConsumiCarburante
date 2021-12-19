@@ -9,11 +9,15 @@ onmessage = (e) => {
             let data = event.target.result;
             let workbook = XLSX.read(data, { type: "binary", cellDates: true, dateNF: 'dd/mm/yyyy' });
             /*postMessage(workbook);*/ // uso worker.js per caricare e leggere il file, ma per conversione delle pagine diverse uso main.js
-            workbook.SheetNames.forEach(sheet => {
+            /*workbook.SheetNames.forEach(sheet => {
+                console.log(sheet);
                 let rowObject = XLSX.utils.sheet_to_json(workbook.Sheets[sheet]);
                 //File load and ...
                 postMessage(rowObject);
-            });
+            });*/
+
+            let rowObject = XLSX.utils.sheet_to_json(workbook.Sheets["Ricerca Autorizzazioni Fep"]);
+            postMessage(rowObject);
         }
     }
 }
